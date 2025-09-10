@@ -47,3 +47,5 @@ pdf-converter-LITE/
 portable-build/
 /portable-build/
 /.idea/
+
+.gitignore
