@@ -45,3 +45,5 @@ pdf-converter-LITE/
 *.zip
 
 portable-build/
+/portable-build/
+/.idea/
