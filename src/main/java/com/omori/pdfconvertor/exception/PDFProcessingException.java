@@ -1,4 +1,4 @@
-package com.lazydev.pdf_convert.exception;
+package com.omori.pdfconvertor.exception;
 
 public class PDFProcessingException extends RuntimeException {
 

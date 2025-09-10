@@ -1,7 +1,7 @@
-package com.lazydev.pdf_convert.service;
+package com.omori.pdfconvertor.service;
 
-import com.lazydev.pdf_convert.exception.PDFProcessingException;
-import com.lazydev.pdf_convert.util.RegexExtractor;
+import com.omori.pdfconvertor.exception.PDFProcessingException;
+import com.omori.pdfconvertor.util.RegexExtractor;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 

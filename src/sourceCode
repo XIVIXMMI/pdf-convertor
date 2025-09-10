@@ -19,9 +19,9 @@ src/
 
 package com.lazydev.pdf_convert.controller;
 
-import com.lazydev.pdf_convert.service.ExcelService;
-import com.lazydev.pdf_convert.service.PDFService;
-import com.lazydev.pdf_convert.service.ConversionService;
+import service.com.omori.pdfconvertor.ExcelService;
+import service.com.omori.pdfconvertor.PDFService;
+import service.com.omori.pdfconvertor.ConversionService;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -606,7 +606,7 @@ public class ConversionService {
 // ExcelService.java
 package com.lazydev.pdf_convert.service;
 
-import com.lazydev.pdf_convert.model.PDFData;
+import model.com.omori.pdfconvertor.PDFData;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
@@ -754,8 +754,8 @@ public class ExcelService {
 
 package com.lazydev.pdf_convert.service;
 
-import com.lazydev.pdf_convert.exception.PDFProcessingException;
-import com.lazydev.pdf_convert.util.RegexExtractor;
+import exception.com.omori.pdfconvertor.PDFProcessingException;
+import util.com.omori.pdfconvertor.RegexExtractor;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 
@@ -902,7 +902,7 @@ public class TimerService {
 
 package com.lazydev.pdf_convert.util;
 
-import com.lazydev.pdf_convert.model.PDFData;
+import model.com.omori.pdfconvertor.PDFData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

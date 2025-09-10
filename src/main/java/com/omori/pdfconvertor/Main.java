@@ -1,4 +1,4 @@
-package com.lazydev.pdf_convert;
+package com.omori.pdfconvertor;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

@@ -1,6 +1,6 @@
-package com.lazydev.pdf_convert.util;
+package com.omori.pdfconvertor.util;
 
-import com.lazydev.pdf_convert.model.PDFData;
+import com.omori.pdfconvertor.model.PDFData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,10 +21,9 @@ public class RegexExtractor {
         PATTERNS.put("serialNumber", Pattern.compile("Số S/N của máy EDC:\\s*(\\S+)"));
         PATTERNS.put("posDevice", Pattern.compile("Loại máy:\\s*(.+)"));
         PATTERNS.put("groupName", Pattern.compile("Tên pháp lý \\(Theo giấy phép kinh doanh\\):(?:.*-\\s*(\\S+)|\\s*(.+))"));
-        PATTERNS.put("notes", Pattern.compile("Ghi chú:\\s*(.+)"));
+        PATTERNS.put("notes", Pattern.compile("Ghi chú:\\s*([\\s\\S]*?)(?=\\s*Ngày\\s+\\d+\\s+tháng\\s+\\d+|$)", Pattern.DOTALL));
         PATTERNS.put("merchantId", Pattern.compile("MID\\s+VND\\s+([\\d\\s\\n]+)"));
         PATTERNS.put("terminalId", Pattern.compile("TID\\s+VND\\s+([\\d\\s\\n]+)"));
-        PATTERNS.put("terminalIdVtop", Pattern.compile("TID V-TOP\\s+([\\d\\s\\n]+)"));
     }
 
     public static String extractSpecificData(String text) {
@@ -75,8 +74,7 @@ public class RegexExtractor {
 
     private static void extractDeviceData(String text, PDFData data) {
         // Serial number
-        extractPattern("serialNumber", text).ifPresent(serialNumber ->
-                data.setSerialNumber("F" + serialNumber));
+        extractPattern("serialNumber", text).ifPresent(data::setSerialNumber);
 
         // POS device
         extractPattern("posDevice", text).ifPresent(device ->
@@ -99,13 +97,6 @@ public class RegexExtractor {
                 String tid00 = cleanTid.substring(0, 2) + "00" + cleanTid.substring(4);
                 data.setTerminalId00(tid00);
             }
-        });
-
-        // Terminal ID V-TOP and POS V-TOP
-        extractPattern("terminalIdVtop", text).ifPresent(tidVtop -> {
-            String cleanTidVtop = tidVtop.replace(" ", "").trim();
-            data.setTerminalVtopId(cleanTidVtop);
-            data.setPosVtop("POS_" + cleanTidVtop);
         });
     }
 

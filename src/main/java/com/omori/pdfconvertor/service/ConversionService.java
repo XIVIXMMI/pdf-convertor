@@ -1,4 +1,4 @@
-package com.lazydev.pdf_convert.service;
+package com.omori.pdfconvertor.service;
 
 import javafx.concurrent.Task;
 import javafx.scene.control.Label;

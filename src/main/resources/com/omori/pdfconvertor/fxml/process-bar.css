@@ -30,20 +30,45 @@
     -fx-padding: 2px;
 }
 
-/* Track của progress bar */
+/* Track của progress bar - nền trắng */
 .progress-bar > .track {
     -fx-background-color: #ffffff;
     -fx-background-radius: 0;
     -fx-border-radius: 0;
 }
 
-/* Thanh progress */
+/* Thanh progress - màu xanh đậm, không có animation */
 .progress-bar > .bar {
     -fx-background-color: #000080;
     -fx-background-radius: 0;
     -fx-background-insets: 0;
     -fx-border-radius: 0;
     -fx-padding: 0;
+    /* Disable any indeterminate animations */
+    -fx-indeterminate-bar-length: 0;
+    -fx-indeterminate-bar-escape: false;
+    -fx-indeterminate-bar-flip: false;
+    -fx-indeterminate-bar-animation-time: 0;
+}
+
+/* Ensure progress bar never shows indeterminate animation */
+.progress-bar:indeterminate > .bar {
+    -fx-background-color: #000080;
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+}
+
+/* Different states for visual feedback */
+.progress-bar.running > .bar {
+    -fx-background-color: #0066cc; /* Slightly lighter blue when running */
+}
+
+.progress-bar.complete > .bar {
+    -fx-background-color: #008000; /* Green when complete */
+}
+
+.progress-bar.reset > .bar {
+    -fx-background-color: #cccccc; /* Gray when reset */
 }
 
 /* Label hiển thị phần trăm */
