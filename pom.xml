@@ -169,25 +169,6 @@
                 </executions>
             </plugin>
 
-            <!-- Maven Dependency Plugin for copying dependencies -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.6.0</version>
-                <executions>
-                    <execution>
-                        <id>copy-dependencies</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/jpackage-input</outputDirectory>
-                            <includeGroupIds>org.openjfx</includeGroupIds>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
 
             <!-- Maven AntRun Plugin for preparing jpackage input -->
             <plugin>
@@ -228,7 +209,9 @@
                     <javaOptions>
                         <option>-Dfile.encoding=UTF-8</option>
                         <option>-Djava.awt.headless=false</option>
-                        <option>--module-path=.</option>
+                        <option>-Djava.library.path=$APPDIR</option>
+                        <option>-Djavafx.verbose=true</option>
+                        <option>-Dprism.verbose=true</option>
                     </javaOptions>
                 </configuration>
             </plugin>
@@ -257,7 +240,9 @@
                             <javaOptions>
                                 <option>-Dfile.encoding=UTF-8</option>
                                 <option>-Djava.awt.headless=false</option>
-                                <option>--module-path=.</option>
+                                <option>-Djava.library.path=$APPDIR</option>
+                                <option>-Djavafx.verbose=true</option>
+                                <option>-Dprism.verbose=true</option>
                             </javaOptions>
                                     <macOptions>
                                 <bundleName>PDF Converter</bundleName>
@@ -291,7 +276,9 @@
                             <javaOptions>
                                 <option>-Dfile.encoding=UTF-8</option>
                                 <option>-Djava.awt.headless=false</option>
-                                <option>--module-path=.</option>
+                                <option>-Djava.library.path=$APPDIR</option>
+                                <option>-Djavafx.verbose=true</option>
+                                <option>-Dprism.verbose=true</option>
                             </javaOptions>
                                     <winOptions>
                                 <winMenu>true</winMenu>
@@ -325,7 +312,9 @@
                             <javaOptions>
                                 <option>-Dfile.encoding=UTF-8</option>
                                 <option>-Djava.awt.headless=false</option>
-                                <option>--module-path=.</option>
+                                <option>-Djava.library.path=$APPDIR</option>
+                                <option>-Djavafx.verbose=true</option>
+                                <option>-Dprism.verbose=true</option>
                             </javaOptions>
                                     <macOptions>
                                 <bundleName>PDF Converter</bundleName>
@@ -359,7 +348,9 @@
                             <javaOptions>
                                 <option>-Dfile.encoding=UTF-8</option>
                                 <option>-Djava.awt.headless=false</option>
-                                <option>--module-path=.</option>
+                                <option>-Djava.library.path=$APPDIR</option>
+                                <option>-Djavafx.verbose=true</option>
+                                <option>-Dprism.verbose=true</option>
                             </javaOptions>
                                     <winOptions>
                                 <winMenu>true</winMenu>
