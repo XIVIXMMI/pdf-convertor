@@ -40,6 +40,8 @@ build/
 
 .claude/
 
+.gradle/
+
 pdf-converter-LITE/
 
 *.zip
