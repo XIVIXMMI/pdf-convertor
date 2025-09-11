@@ -7,7 +7,7 @@
 <?import javafx.scene.image.ImageView?>
 
 <VBox alignment="TOP_CENTER" spacing="15.0" xmlns:fx="http://javafx.com/fxml/1"
-        fx:controller="com.lazydev.pdf_convert.controller.PDFConvertController"
+        fx:controller="com.omori.pdfconvertor.controller.PDFConvertController"
         stylesheets="@styles.css, @process-bar.css">
 
     <padding>

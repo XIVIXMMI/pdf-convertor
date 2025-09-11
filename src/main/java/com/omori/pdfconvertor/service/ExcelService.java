@@ -1,7 +1,7 @@
 // ExcelService.java
-package com.lazydev.pdf_convert.service;
+package com.omori.pdfconvertor.service;
 
-import com.lazydev.pdf_convert.model.PDFData;
+import com.omori.pdfconvertor.model.PDFData;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
@@ -17,8 +17,7 @@ public class ExcelService {
 
     private static final String[] HEADERS = {
                 "Tên File","Tên kinh doanh", "Địa chỉ", "Số serial", "Loại máy",
-                "Mã máy", "Ghi chú", "MID", "TID", "TID 00",
-                "TID V-TOP", "POS V-TOP"
+                "Mã máy", "Ghi chú", "MID", "TID", "TID 00"
     };
 
     public void convertTxtToExcel(File txtFile) throws Exception {
@@ -140,9 +139,8 @@ public class ExcelService {
         row.createCell(columnIndex++).setCellValue(data.getNotes());
         row.createCell(columnIndex++).setCellValue(data.getMerchantId());
         row.createCell(columnIndex++).setCellValue(data.getTerminalId());
-        row.createCell(columnIndex++).setCellValue(data.getTerminalId00());
-        row.createCell(columnIndex++).setCellValue(data.getTerminalVtopId());
-        row.createCell(columnIndex).setCellValue(data.getPosVtop());
+        row.createCell(columnIndex).setCellValue(data.getTerminalId00());
+        // Removed: TID V-TOP and POS V-TOP columns
     }
 
 }

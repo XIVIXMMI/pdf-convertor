@@ -1,4 +1,4 @@
-package com.lazydev.pdf_convert.model;
+package com.omori.pdfconvertor.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
