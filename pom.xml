@@ -170,6 +170,27 @@
             </plugin>
 
 
+            <!-- Maven Dependency Plugin for copying JavaFX -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-javafx-runtime</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/jpackage-input/runtime</outputDirectory>
+                            <includeGroupIds>org.openjfx</includeGroupIds>
+                            <includeScope>runtime</includeScope>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <!-- Maven AntRun Plugin for preparing jpackage input -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -209,10 +230,8 @@
                     <javaOptions>
                         <option>-Dfile.encoding=UTF-8</option>
                         <option>-Djava.awt.headless=false</option>
-                        <option>-Djava.library.path=$APPDIR</option>
-                        <option>-Djavafx.verbose=true</option>
-                        <option>-Dprism.verbose=true</option>
                     </javaOptions>
+                    <runtimeImage>${java.home}</runtimeImage>
                 </configuration>
             </plugin>
         </plugins>
@@ -240,10 +259,8 @@
                             <javaOptions>
                                 <option>-Dfile.encoding=UTF-8</option>
                                 <option>-Djava.awt.headless=false</option>
-                                <option>-Djava.library.path=$APPDIR</option>
-                                <option>-Djavafx.verbose=true</option>
-                                <option>-Dprism.verbose=true</option>
                             </javaOptions>
+                            <runtimeImage>${java.home}</runtimeImage>
                                     <macOptions>
                                 <bundleName>PDF Converter</bundleName>
                                 <bundleIdentifier>com.omori.pdfconvertor</bundleIdentifier>
@@ -276,10 +293,8 @@
                             <javaOptions>
                                 <option>-Dfile.encoding=UTF-8</option>
                                 <option>-Djava.awt.headless=false</option>
-                                <option>-Djava.library.path=$APPDIR</option>
-                                <option>-Djavafx.verbose=true</option>
-                                <option>-Dprism.verbose=true</option>
                             </javaOptions>
+                            <runtimeImage>${java.home}</runtimeImage>
                                     <winOptions>
                                 <winMenu>true</winMenu>
                                 <winShortcut>true</winShortcut>
@@ -312,10 +327,8 @@
                             <javaOptions>
                                 <option>-Dfile.encoding=UTF-8</option>
                                 <option>-Djava.awt.headless=false</option>
-                                <option>-Djava.library.path=$APPDIR</option>
-                                <option>-Djavafx.verbose=true</option>
-                                <option>-Dprism.verbose=true</option>
                             </javaOptions>
+                            <runtimeImage>${java.home}</runtimeImage>
                                     <macOptions>
                                 <bundleName>PDF Converter</bundleName>
                                 <bundleIdentifier>com.omori.pdfconvertor</bundleIdentifier>
@@ -348,10 +361,8 @@
                             <javaOptions>
                                 <option>-Dfile.encoding=UTF-8</option>
                                 <option>-Djava.awt.headless=false</option>
-                                <option>-Djava.library.path=$APPDIR</option>
-                                <option>-Djavafx.verbose=true</option>
-                                <option>-Dprism.verbose=true</option>
                             </javaOptions>
+                            <runtimeImage>${java.home}</runtimeImage>
                                     <winOptions>
                                 <winMenu>true</winMenu>
                                 <winShortcut>true</winShortcut>
