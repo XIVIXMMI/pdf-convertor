@@ -42,9 +42,10 @@ public class PDFToExcelService {
      * @return Success message
      */
     public String convertFolderToExcel(File folder, Consumer<Integer> progressCallback) {
-        if (!folder.exists() || !folder.isDirectory()) {
+        if ( folder == null || !folder.exists() || !folder.isDirectory()) {
             return "Thư mục không hợp lệ: " + folder.getName();
         }
+        final Consumer<Integer> cb = (progressCallback != null ) ? progressCallback : i -> {};
 
         File[] pdfFiles = Optional.ofNullable(
             folder.listFiles((dir, name) -> name.toLowerCase().endsWith(".pdf"))
@@ -90,8 +91,14 @@ public class PDFToExcelService {
             
             // Wait for all PDFs to be processed
             pdfExecutor.shutdown();
-            pdfExecutor.awaitTermination(60, TimeUnit.SECONDS);
-            
+            long waitSeconds = Math.max(60, pdfFiles.length * 4L);
+            boolean finished = pdfExecutor.awaitTermination(waitSeconds, TimeUnit.SECONDS);
+            if (!finished) {
+                pdfExecutor.shutdownNow();
+                return String.format("Hết thời gian: đã xử lý %d/%d tệp.",
+                        processedCount.get(), pdfFiles.length);
+            }
+
             // Create Excel with results (sorted by original order)
             try (Workbook workbook = new XSSFWorkbook()) {
                 Sheet sheet = workbook.createSheet("POS Data");

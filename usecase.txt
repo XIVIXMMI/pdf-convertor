@@ -1,0 +1,29 @@
+sequenceDiagram
+    autonumber
+    actor U as User
+    participant UI as JavaFX UI
+    participant C as PDFConvertController
+    participant S as PDFToExcelService
+    participant FP as Folder Pool (2 threads)
+    participant PP as PDF Pool (4 threads)
+    participant PB as PDFBox/RegexExtractor
+    participant XL as Apache POI (Excel)
+
+    U->>UI: Click "Convert"
+    UI->>C: onConvert()
+    rect rgba(200,220,255,0.2)
+      note over C,FP: Parallel per-folder processing (2 threads)
+      C->>FP: submit convert task per selected folder
+      FP->>S: convertFolderToExcel(folder, progressCb)
+      rect rgba(220,255,220,0.2)
+        note over S,PP: Parallel per-PDF extraction (4 threads)
+        S->>PP: submit parse for each .pdf
+        PP->>PB: Load PDF, extract text, parse fields
+        PB-->>S: PDFData result
+      end
+      S->>XL: Create workbook, write headers/rows
+      XL-->>S: Save {folderName}.xlsx
+      S-->>C: Status + progress updates (callback)
+      C->>UI: Platform.runLater: update progress/labels
+    end
+    C-->>UI: Mark complete/error per folder

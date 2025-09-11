@@ -122,7 +122,7 @@
                         <!-- Default configuration for running with: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>com.lazydev.pdf_convert/com.omori.pdfconvertor.Main</mainClass>
+                            <mainClass>com.omori.pdfconvertor.Main</mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
                             <jlinkImageName>app</jlinkImageName>
@@ -169,6 +169,26 @@
                 </executions>
             </plugin>
 
+            <!-- Maven Dependency Plugin for copying dependencies -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/jpackage-input</outputDirectory>
+                            <includeGroupIds>org.openjfx</includeGroupIds>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <!-- Maven AntRun Plugin for preparing jpackage input -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -205,10 +225,10 @@
                     <input>target/jpackage-input</input>
                     <mainJar>pdf_convert-${project.version}.jar</mainJar>
                     <mainClass>com.omori.pdfconvertor.Main</mainClass>
-                    <runtimeImage>JAVA_HOME</runtimeImage>
                     <javaOptions>
                         <option>-Dfile.encoding=UTF-8</option>
                         <option>-Djava.awt.headless=false</option>
+                        <option>--module-path=.</option>
                     </javaOptions>
                 </configuration>
             </plugin>
@@ -237,8 +257,9 @@
                             <javaOptions>
                                 <option>-Dfile.encoding=UTF-8</option>
                                 <option>-Djava.awt.headless=false</option>
+                                <option>--module-path=.</option>
                             </javaOptions>
-                            <macOptions>
+                                    <macOptions>
                                 <bundleName>PDF Converter</bundleName>
                                 <bundleIdentifier>com.omori.pdfconvertor</bundleIdentifier>
                                 <categoryType>public.app-category.productivity</categoryType>
@@ -270,8 +291,9 @@
                             <javaOptions>
                                 <option>-Dfile.encoding=UTF-8</option>
                                 <option>-Djava.awt.headless=false</option>
+                                <option>--module-path=.</option>
                             </javaOptions>
-                            <winOptions>
+                                    <winOptions>
                                 <winMenu>true</winMenu>
                                 <winShortcut>true</winShortcut>
                                 <winMenuGroup>PDF Tools</winMenuGroup>
@@ -303,8 +325,9 @@
                             <javaOptions>
                                 <option>-Dfile.encoding=UTF-8</option>
                                 <option>-Djava.awt.headless=false</option>
+                                <option>--module-path=.</option>
                             </javaOptions>
-                            <macOptions>
+                                    <macOptions>
                                 <bundleName>PDF Converter</bundleName>
                                 <bundleIdentifier>com.omori.pdfconvertor</bundleIdentifier>
                                 <categoryType>public.app-category.productivity</categoryType>
@@ -336,8 +359,9 @@
                             <javaOptions>
                                 <option>-Dfile.encoding=UTF-8</option>
                                 <option>-Djava.awt.headless=false</option>
+                                <option>--module-path=.</option>
                             </javaOptions>
-                            <winOptions>
+                                    <winOptions>
                                 <winMenu>true</winMenu>
                                 <winShortcut>true</winShortcut>
                                 <winMenuGroup>PDF Tools</winMenuGroup>
