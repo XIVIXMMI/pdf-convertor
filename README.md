@@ -1,235 +1,247 @@
-# PDF Converter JavaFX
+# 📄 PDF Converter Tool
 
-A powerful JavaFX desktop application for extracting and converting data from PDF files to Excel format. This application provides an intuitive graphical user interface for processing PDF documents and exporting structured data to Excel spreadsheets.
+A powerful PDF to Excel converter with a user-friendly graphical interface. The application supports batch processing and real-time progress tracking.
 
 ## 🚀 Features
 
-- **PDF Data Extraction**: Extract text, tables, and structured data from PDF files
-- **Excel Export**: Convert extracted data to Excel (.xlsx) format
-- **Batch Processing**: Process multiple PDF files at once
-- **Progress Tracking**: Real-time progress bar and timer display
-- **Cross-Platform**: Works on Windows, macOS, and Linux
-- **User-Friendly Interface**: Clean and intuitive JavaFX GUI
-- **Regex Pattern Matching**: Advanced text extraction using regex patterns
-- **Error Handling**: Comprehensive error handling and logging
+- **🔄 PDF to Excel Conversion**: Extract data from PDF files and export to Excel (.xlsx) format
+- **📁 Batch Processing**: Process multiple PDF folders simultaneously
+- **🎯 Drag & Drop Interface**: Drag and drop folders for quick processing
+- **📊 Progress Tracking**: Real-time progress bar and timer
+- **🌍 Cross-Platform**: Runs on Windows, macOS, and Linux
+- **🎨 User-Friendly GUI**: Modern Swing interface with intuitive design
+- **🚀 Multiple Modes**: Automatic GUI/Console mode switching
+- **⚡ High Performance**: Multi-threading for fast processing
 
 ## 🛠 Technologies Used
 
 ### Core Technologies
-- **Java 17** - Programming language and runtime
-- **JavaFX 17.0.13** - Desktop GUI framework
-- **Maven 3.9.6** - Build tool and dependency management
+- **Java 21** - Programming language and runtime
+- **Swing** - Desktop GUI framework  
+- **Gradle 8.5** - Build tool and dependency management
 
 ### Libraries & Dependencies
-- **Apache PDFBox 2.0.29** - PDF document processing and text extraction
+- **Apache PDFBox 2.0.29** - PDF document processing and data extraction
 - **Apache POI 5.2.5** - Excel file creation and manipulation
-- **Logback** - Logging framework
-- **JUnit 5.10.2** - Unit testing framework
+- **Logback + SLF4J** - Logging framework
+- **Lombok** - Code generation and annotations
 
 ### Build & Packaging Tools
-- **Maven Shade Plugin** - Creates executable JAR with dependencies
-- **JPackage Plugin** - Creates native installers (.exe, .dmg, .app)
-- **Maven Wrapper** - Ensures consistent Maven version across environments
+- **Gradle Application Plugin** - Creates executable distributions
+- **jpackage** - Creates native installers (.exe, .dmg, .msi)
+- **GraalVM Native Image** - Creates native executables
+- **Gradle Wrapper** - Ensures consistent Gradle version
 
 ## 📁 Project Structure
 
 ```
-pdf-convertor-javafx/
+pdf-convertor/
 ├── src/
 │   ├── main/
 │   │   ├── java/com/omori/pdfconvertor/
-│   │   │   ├── Main.java                    # Application entry point
-│   │   │   ├── controller/
-│   │   │   │   └── PDFConvertController.java # Main UI controller
-│   │   │   ├── service/
-│   │   │   │   ├── ConversionService.java    # PDF to Excel conversion logic
-│   │   │   │   ├── PDFService.java           # PDF processing service
-│   │   │   │   ├── ExcelService.java         # Excel file operations
-│   │   │   │   ├── PDFToExcelService.java    # Main conversion service
-│   │   │   │   └── TimerService.java         # Timer functionality
-│   │   │   ├── model/
-│   │   │   │   └── PDFData.java              # Data model for PDF content
-│   │   │   ├── util/
-│   │   │   │   └── RegexExtractor.java       # Regex pattern utilities
-│   │   │   └── exception/
-│   │   │       └── PDFProcessingException.java # Custom exceptions
+│   │   │   ├── Main.java                    # Main entry point
+│   │   │   ├── SwingMain.java               # GUI Swing application
+│   │   │   ├── HeadlessMain.java            # Console mode application
+│   │   │   └── service/
+│   │   │       └── PDFToExcelService.java   # PDF conversion service
+│   │   ├── scripts/
+│   │   │   ├── PDFConverter                 # Linux/Mac launcher script
+│   │   │   └── PDFConverter.bat            # Windows launcher script
 │   │   └── resources/
-│   │       └── com/omori/pdfconvertor/
-│   │           ├── fxml/
-│   │           │   ├── main-view.fxml        # Main UI layout
-│   │           │   ├── styles.css            # Application styles
-│   │           │   └── process-bar.css       # Progress bar styles
-│   │           └── xml/
-│   │               └── logback.xml           # Logging configuration
-├── pom.xml                                   # Maven configuration
-├── mvnw / mvnw.cmd                          # Maven wrapper scripts
-└── pdf-converter-LITE/                      # Optimized Windows package
-    └── pdf-converter-LITE-20250910.zip      # Ready-to-distribute package
+│   │       └── META-INF/                    # Native image configuration
+├── build.gradle                            # Gradle build configuration
+├── gradle.properties                       # Gradle properties
+├── build-windows.bat                       # Windows build script
+├── build-windows.ps1                      # PowerShell build script
+├── BUILD_GUIDE.md                         # Detailed build instructions
+└── README.md                              # This file
 ```
 
-## 🔧 Development Setup
+## 🔧 System Requirements
 
-### Prerequisites
-- **Java 17** or higher (Eclipse Temurin recommended)
-- **Maven 3.6+** (or use included Maven wrapper)
-- **Git** for version control
+### To Build from Source Code
+- **JDK 17+** (Eclipse Temurin or Oracle JDK recommended)
+- **Gradle 8.0+** (or use included Gradle wrapper)
+- **Git** to clone repository
 
-### Local Development
+### To Run Application
+- **No JVM required** (for .dmg/.exe/.msi files with embedded runtime)
+- **Or JVM 17+** (for .zip distribution)
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/pdf-convertor-javafx.git
-   cd pdf-convertor-javafx
-   ```
+## 🚀 Installation & Usage
 
-2. **Build the project**
-   ```bash
-   # Using Maven wrapper (recommended)
-   ./mvnw clean compile
-   
-   # Or with system Maven
-   mvn clean compile
-   ```
+### 📥 Download Pre-built Releases
 
-3. **Run the application**
-   ```bash
-   # Using Maven wrapper
-   ./mvnw javafx:run
-   
-   # Or with system Maven
-   mvn javafx:run
-   ```
+Download pre-built files from the [Releases page]:
 
-4. **Run tests**
-   ```bash
-   ./mvnw test
-   ```
+| Platform | File | Size | JVM Required | Description |
+|----------|------|------|--------------|-------------|
+| **Universal** | `PDFConverter-1.0-SNAPSHOT.zip` | ~22MB | ✅ | Runs on any platform with JVM |
+| **macOS** | `PDFConverter-1.0.0.dmg` | ~150MB | ❌ | macOS installer with embedded JVM |
+| **macOS Native** | `PDFConverter-Native-1.0.0.dmg` | ~65MB | ❌ | GraalVM native, fastest startup |
+| **Windows** | `PDFConverter-1.0.0.exe` | ~150MB | ❌ | Windows installer with embedded JVM |
+| **Windows** | `PDFConverter-1.0.0.msi` | ~150MB | ❌ | Windows MSI package |
 
-## 📦 Building Distribution Packages
+### 💻 How to Use
 
-### Create Executable JAR
+#### macOS
 ```bash
-# Creates target/pdf_convert-1.0-SNAPSHOT.jar with all dependencies
-./mvnw clean package -DskipTests
+# Download and install .dmg file
+# Double-click PDFConverter-1.0.0.dmg
+# Drag to Applications folder
+# Launch from Applications or Spotlight
 ```
 
-### Create Native Applications
-
-#### Windows Executable (.exe)
-```bash
-# Requires Windows environment with jpackage
-./mvnw jpackage:jpackage -Pwindows-exe
+#### Windows  
+```cmd
+# Download and run .exe or .msi file
+# Double-click to install
+# Shortcuts will be created on Desktop and Start Menu
+# No Java installation required
 ```
 
-#### macOS Application (.app/.dmg)
+#### Universal ZIP (All Platforms)
 ```bash
-# Requires macOS environment with jpackage
-./mvnw jpackage:jpackage -Pmac
+# Extract zip file
+unzip PDFConverter-1.0-SNAPSHOT.zip
+cd PDFConverter-1.0-SNAPSHOT
+
+# Run on Linux/macOS
+./bin/PDFConverter
+
+# Run on Windows
+bin\PDFConverter.bat
 ```
 
-#### Linux Application
+## 🏗️ Building from Source Code
+
+### Quick Start
 ```bash
-# Requires Linux environment with jpackage
-./mvnw jpackage:jpackage -Plinux
+# Clone repository
+git clone https://github.com/yourusername/pdf-convertor.git
+cd pdf-convertor
+
+# Build all distributions for current platform
+./gradlew createAllPlatformDistributions
 ```
 
-## 🎯 Production Deployment
+### Platform-specific Builds
 
-### Windows Offline Package (Recommended)
-
-For environments without internet access or Java pre-installed:
-
-1. **Download the optimized package**
-   - `pdf-converter-LITE-20250910.zip` (1GB) - Contains everything needed
-
-2. **Extract and run**
-   - Extract ZIP file on Windows machine
-   - Double-click `build-windows-fixed.bat`
-   - No internet or Java installation required
-
-### Features of LITE Package:
-- ✅ **100% Offline** - No internet downloads required
-- ✅ **Self-contained** - Includes JDK 17 + Maven + all dependencies  
-- ✅ **Optimized Size** - Reduced by 300MB+ from full package
-- ✅ **No installation** - Just extract and run
-- ✅ **Direct paths** - No PATH configuration issues
-
-## 🚀 Usage Guide
-
-### Running the Application
-
-1. **Launch the application**
-   - Double-click the generated executable, or
-   - Run: `java -jar target/pdf_convert-1.0-SNAPSHOT.jar`
-
-2. **Select PDF files**
-   - Click "Browse" to select single or multiple PDF files
-   - Supported formats: .pdf
-
-3. **Configure extraction**
-   - Set output directory for Excel files
-   - Choose extraction patterns (optional)
-
-4. **Process files**
-   - Click "Convert" to start processing
-   - Monitor progress with built-in progress bar and timer
-
-5. **Review results**
-   - Generated Excel files will be saved to specified output directory
-   - Check logs for any processing errors
-
-### Command Line Usage
+#### macOS
 ```bash
-# Run with specific JVM options
-java -Xmx2G -jar pdf_convert-1.0-SNAPSHOT.jar
+# DMG with embedded JVM
+./gradlew createDMGWithRuntime
 
-# Run in headless mode (if supported)
-java -Djava.awt.headless=true -jar pdf_convert-1.0-SNAPSHOT.jar
+# Native DMG (GraalVM)
+./gradlew createNativeDMG
+
+# Build all macOS distributions
+./gradlew createFullDistribution
+```
+
+#### Windows
+```cmd
+# Use provided script (recommended)
+build-windows.bat
+
+# Or manual commands
+gradlew.bat createWindowsEXE
+gradlew.bat createWindowsMSI
+```
+
+#### Universal ZIP
+```bash
+# Create ZIP that runs on any platform
+./gradlew distZip
+```
+
+### Detailed Build Instructions
+See [BUILD_GUIDE.md](BUILD_GUIDE.md) for comprehensive build process documentation.
+
+## 📖 Usage Guide
+
+### Main Interface
+
+1. **Select Folders**: Click "Choose Folder" or drag and drop folders containing PDFs
+2. **Track Progress**: Monitor progress bar and elapsed timer
+3. **View Results**: Excel files will be created in the same directory as PDFs
+4. **Batch Processing**: Can select multiple folders simultaneously
+
+### Advanced Features
+
+- **🎯 Smart Detection**: Automatically detects GUI/Console mode availability
+- **🔄 Multi-threading**: Parallel processing of multiple files
+- **📊 Progress Tracking**: Real-time progress with elapsed time display
+- **🛡️ Error Handling**: Comprehensive error handling and recovery
+- **📝 Logging**: Detailed logs for debugging and troubleshooting
+
+### Command Line Mode
+```bash
+# Run with arguments to use headless mode
+./bin/PDFConverter /path/to/pdf/folder
+
+# Or with Java directly
+java -jar lib/pdf-convertor-1.0-SNAPSHOT.jar /path/to/folder
 ```
 
 ## 🐛 Troubleshooting
 
 ### Common Issues
 
-1. **"JavaFX runtime components are missing"**
+1. **"GUI not available"**
+   - Application will automatically switch to console mode
+   - Ensure DISPLAY environment is set (Linux)
+
+2. **"Java not found"**
    ```bash
-   # Ensure JavaFX is included in module path
-   java --module-path /path/to/javafx/lib --add-modules javafx.controls,javafx.fxml -jar app.jar
+   # For ZIP distribution, need JVM 17+
+   export JAVA_HOME=/path/to/jdk-17
+   # Or use .dmg/.exe with embedded JVM
    ```
 
-2. **Out of Memory errors with large PDFs**
+3. **Out of Memory with large PDFs**
    ```bash
    # Increase heap size
-   java -Xmx4G -jar pdf_convert-1.0-SNAPSHOT.jar
+   export JAVA_OPTS="-Xmx4G"
+   ./bin/PDFConverter
    ```
 
-3. **PDF processing errors**
-   - Check PDF file integrity
-   - Ensure PDF is not password-protected
-   - Review logs in `logs/` directory
+4. **Excel files not created**
+   - Check directory permissions
+   - Ensure PDFs are not password-protected
+   - Review logs in status area
 
 ### Build Issues
 
-1. **Maven dependency resolution**
+1. **GraalVM native-image not found**
    ```bash
-   # Clear local repository and rebuild
-   rm -rf ~/.m2/repository
-   ./mvnw clean install
+   # Install GraalVM and native-image
+   sdk install java 21.0.1-graal
+   gu install native-image
    ```
 
-2. **JavaFX module issues**
-   ```bash
-   # Verify JavaFX dependencies
-   ./mvnw dependency:tree | grep javafx
-   ```
+2. **Windows build fails on macOS/Linux**
+   - Windows .exe/.msi can only be built on Windows machines
+   - Use Universal ZIP for cross-platform distribution
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+2. Create feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open Pull Request
+
+## 📊 Performance
+
+| Build Type | File Size | Startup Time | Memory Usage |
+|------------|-----------|--------------|--------------|
+| Universal ZIP | ~22MB | Fast* | ~200MB |
+| macOS DMG | ~150MB | Medium | ~300MB |
+| Native DMG | ~65MB | Very Fast | ~150MB |
+| Windows EXE/MSI | ~150MB | Medium | ~300MB |
+
+*If JVM is already available
 
 ## 📄 License
 
@@ -237,10 +249,10 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 📧 Support
 
-For questions, issues, or contributions:
+For support, bug reports, or contributions:
 - Create an issue on GitHub
-- Contact: [your-email@example.com]
+- Email: nguyen.le.programmer@gmail.com
 
 ---
 
-**Built with ❤️ using Java 17 & JavaFX**
+**🚀 Built with Java 21 & Swing | Optimized for Performance & User Experience**
