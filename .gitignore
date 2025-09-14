@@ -76,3 +76,6 @@ usecase.txt
 # OS generated files
 Thumbs.db
 *~
+
+# Private documentation folder
+.docs/

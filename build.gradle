@@ -4,6 +4,33 @@ plugins {
     id 'org.graalvm.buildtools.native' version '0.10.3'
 }
 
+// Cross-platform Java home detection
+if (!project.hasProperty('org.gradle.java.home')) {
+    def javaHome = System.getenv('JAVA_HOME')
+    if (javaHome) {
+        project.ext.setProperty('org.gradle.java.home', javaHome)
+        logger.info("Using JAVA_HOME: ${javaHome}")
+    } else {
+        // Fallback for common Java installations
+        def currentOS = System.getProperty("os.name").toLowerCase()
+        if (currentOS.contains("mac")) {
+            // Try common macOS Java locations
+            def macJavaHome = System.getProperty("java.home")
+            if (macJavaHome) {
+                project.ext.setProperty('org.gradle.java.home', macJavaHome)
+                logger.info("Using detected macOS Java: ${macJavaHome}")
+            }
+        } else if (currentOS.contains("windows")) {
+            // Use system Java on Windows
+            def windowsJavaHome = System.getProperty("java.home")
+            if (windowsJavaHome) {
+                project.ext.setProperty('org.gradle.java.home', windowsJavaHome)
+                logger.info("Using detected Windows Java: ${windowsJavaHome}")
+            }
+        }
+    }
+}
+
 group = 'com.omori'
 version = '1.0-SNAPSHOT'
 
