@@ -39,6 +39,11 @@ java {
     targetCompatibility = JavaVersion.VERSION_21
 }
 
+// Add compiler warnings for better error detection
+tasks.withType(JavaCompile) {
+    options.compilerArgs += ['-Xlint:unchecked', '-Xlint:deprecation']
+}
+
 repositories {
     mavenCentral()
 }
@@ -265,7 +270,8 @@ task createWindowsEXE(dependsOn: fatJar) {
             existingEXE.delete()
         }
         
-        try {
+        def currentOS = System.getProperty("os.name").toLowerCase()
+        if (currentOS.contains("windows")) {
             exec {
                 commandLine 'jpackage',
                     '--input', 'build/libs',
@@ -277,7 +283,6 @@ task createWindowsEXE(dependsOn: fatJar) {
                     '--app-version', '1.0.0',
                     '--vendor', 'Omori',
                     '--description', 'PDF to Excel Converter Tool',
-                    '--win-console',  // Enable console for debugging
                     '--win-dir-chooser', // Allow user to choose install directory
                     '--win-menu', // Add to start menu
                     '--win-shortcut', // Create desktop shortcut
@@ -287,13 +292,9 @@ task createWindowsEXE(dependsOn: fatJar) {
                     '--java-options', '-Xms512m'
             }
             println "✅ Created Windows EXE installer: PDFConverter-1.0.0.exe"
-        } catch (Exception e) {
-            if (System.getProperty("os.name").toLowerCase().contains("windows")) {
-                throw e
-            } else {
-                println "⚠️  Windows EXE creation skipped (not running on Windows)"
-                println "   To build .exe, run this task on a Windows machine with JDK 17+"
-            }
+        } else {
+            println "⚠️  Windows EXE creation skipped (not running on Windows)"
+            println "   To build .exe, run this task on a Windows machine with JDK 17+"
         }
     }
 }
@@ -311,7 +312,8 @@ task createWindowsMSI(dependsOn: fatJar) {
             existingMSI.delete()
         }
         
-        try {
+        def currentOS = System.getProperty("os.name").toLowerCase()
+        if (currentOS.contains("windows")) {
             exec {
                 commandLine 'jpackage',
                     '--input', 'build/libs',
@@ -324,7 +326,7 @@ task createWindowsMSI(dependsOn: fatJar) {
                     '--vendor', 'Omori',
                     '--description', 'PDF to Excel Converter Tool',
                     '--win-dir-chooser', // Allow user to choose install directory
-                    '--win-menu', // Add to start menu  
+                    '--win-menu', // Add to start menu
                     '--win-shortcut', // Create desktop shortcut
                     '--java-options', '-Dfile.encoding=UTF-8',
                     '--java-options', '-Djava.awt.headless=false',
@@ -332,13 +334,9 @@ task createWindowsMSI(dependsOn: fatJar) {
                     '--java-options', '-Xms512m'
             }
             println "✅ Created Windows MSI installer: PDFConverter-1.0.0.msi"
-        } catch (Exception e) {
-            if (System.getProperty("os.name").toLowerCase().contains("windows")) {
-                throw e
-            } else {
-                println "⚠️  Windows MSI creation skipped (not running on Windows)"
-                println "   To build .msi, run this task on a Windows machine with JDK 17+"
-            }
+        } else {
+            println "⚠️  Windows MSI creation skipped (not running on Windows)"
+            println "   To build .msi, run this task on a Windows machine with JDK 17+"
         }
     }
 }

@@ -106,6 +106,7 @@ public class SwingMain extends JFrame {
                 dropPanel.setBackground(Color.LIGHT_GRAY);
                 try {
                     dtde.acceptDrop(DnDConstants.ACTION_COPY);
+                    @SuppressWarnings("unchecked")
                     List<File> droppedFiles = (List<File>) dtde.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
                     
                     selectedFolders = droppedFiles.stream()
