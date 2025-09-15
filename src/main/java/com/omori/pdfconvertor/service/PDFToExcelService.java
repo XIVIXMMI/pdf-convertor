@@ -43,7 +43,7 @@ public class PDFToExcelService {
      */
     public String convertFolderToExcel(File folder, Consumer<Integer> progressCallback) {
         if ( folder == null || !folder.exists() || !folder.isDirectory()) {
-            return "Thư mục không hợp lệ: " + folder.getName();
+            return "Thư mục không hợp lệ" + (folder != null ? (": " + folder.getAbsolutePath()) : "");
         }
         final Consumer<Integer> cb = (progressCallback != null ) ? progressCallback : i -> {};
 
@@ -80,7 +80,7 @@ public class PDFToExcelService {
                         
                         // Batch UI updates every 5 files for performance
                         if (completed % 5 == 0 || completed == pdfFiles.length) {
-                            progressCallback.accept(completed);
+                            cb.accept(completed);
                         }
                         
                     } catch (Exception e) {

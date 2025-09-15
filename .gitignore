@@ -40,6 +40,8 @@ build/
 
 .claude/
 
+.gradle/
+
 pdf-converter-LITE/
 
 *.zip
@@ -48,4 +50,32 @@ portable-build/
 /portable-build/
 /.idea/
 
-.gitignore
+# Native executables
+pdf-convertor-native
+
+# Test data folder
+test-pdf-folder/
+
+# Use case documentation
+usecase.txt
+
+# Temporary files
+*.tmp
+*.log
+
+# Distribution files (keep source, ignore built artifacts)
+*.exe
+*.msi
+*.dmg
+
+# IDE specific files
+.vscode/
+*.swp
+*.swo
+
+# OS generated files
+Thumbs.db
+*~
+
+# Private documentation folder
+.docs/

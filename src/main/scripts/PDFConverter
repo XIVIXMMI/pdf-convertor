@@ -1,0 +1,60 @@
+#!/bin/bash
+
+# PDF Converter Launcher Script
+# Automatically detects GUI capability and launches appropriate version
+
+# Get the directory where this script is located
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+LIB_DIR="$DIR/../lib"
+
+# Check if we can find Java
+if command -v java >/dev/null 2>&1; then
+    JAVA_CMD="java"
+elif [[ -n "$JAVA_HOME" ]] && [[ -x "$JAVA_HOME/bin/java" ]]; then
+    JAVA_CMD="$JAVA_HOME/bin/java"
+else
+    echo "❌ Java không được tìm thấy. Vui lòng cài đặt Java hoặc đặt JAVA_HOME."
+    exit 1
+fi
+
+# Set up classpath
+CLASSPATH=""
+for jar in "$LIB_DIR"/*.jar; do
+    if [[ -f "$jar" ]]; then
+        if [[ -z "$CLASSPATH" ]]; then
+            CLASSPATH="$jar"
+        else
+            CLASSPATH="$CLASSPATH:$jar"
+        fi
+    fi
+done
+
+# Java options for GUI and encoding
+JAVA_OPTS="-Dfile.encoding=UTF-8 -Djava.awt.headless=false -Xmx2g -Xms512m"
+
+# Check if X11/GUI is available (for Linux/Unix)
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    # macOS - GUI always available
+    GUI_AVAILABLE=true
+elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    # Linux - check for DISPLAY
+    if [[ -n "$DISPLAY" ]]; then
+        GUI_AVAILABLE=true
+    else
+        GUI_AVAILABLE=false
+        JAVA_OPTS="$JAVA_OPTS -Djava.awt.headless=true"
+    fi
+else
+    # Windows or other - assume GUI available
+    GUI_AVAILABLE=true
+fi
+
+echo "🚀 Khởi động PDF Converter..."
+if [[ "$GUI_AVAILABLE" == "true" ]]; then
+    echo "📱 GUI mode enabled"
+else
+    echo "💻 Console mode (GUI not available)"
+fi
+
+# Launch the application
+exec "$JAVA_CMD" $JAVA_OPTS -cp "$CLASSPATH" com.omori.pdfconvertor.Main "$@"

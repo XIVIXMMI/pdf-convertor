@@ -1,0 +1,482 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.graalvm.buildtools.native' version '0.10.3'
+}
+
+// Cross-platform Java home detection
+if (!project.hasProperty('org.gradle.java.home')) {
+    def javaHome = System.getenv('JAVA_HOME')
+    if (javaHome) {
+        project.ext.setProperty('org.gradle.java.home', javaHome)
+        logger.info("Using JAVA_HOME: ${javaHome}")
+    } else {
+        // Fallback for common Java installations
+        def currentOS = System.getProperty("os.name").toLowerCase()
+        if (currentOS.contains("mac")) {
+            // Try common macOS Java locations
+            def macJavaHome = System.getProperty("java.home")
+            if (macJavaHome) {
+                project.ext.setProperty('org.gradle.java.home', macJavaHome)
+                logger.info("Using detected macOS Java: ${macJavaHome}")
+            }
+        } else if (currentOS.contains("windows")) {
+            // Use system Java on Windows
+            def windowsJavaHome = System.getProperty("java.home")
+            if (windowsJavaHome) {
+                project.ext.setProperty('org.gradle.java.home', windowsJavaHome)
+                logger.info("Using detected Windows Java: ${windowsJavaHome}")
+            }
+        }
+    }
+}
+
+group = 'com.omori'
+version = '1.0-SNAPSHOT'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+// Add compiler warnings for better error detection
+tasks.withType(JavaCompile) {
+    options.compilerArgs += ['-Xlint:unchecked', '-Xlint:deprecation']
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // JavaFX (handled by JavaFX plugin)
+
+    // Apache PDFBox
+    implementation 'org.apache.pdfbox:pdfbox:2.0.29'
+    
+    // Apache POI
+    implementation 'org.apache.poi:poi:5.2.5'
+    implementation 'org.apache.poi:poi-ooxml:5.2.5'
+    
+    // Additional dependencies for POI
+    implementation 'org.apache.commons:commons-compress:1.21'
+    implementation 'org.apache.xmlbeans:xmlbeans:5.1.1'
+    
+    // Logging
+    implementation 'org.apache.logging.log4j:log4j-core:2.20.0'
+    implementation 'org.apache.logging.log4j:log4j-api:2.20.0'
+    implementation 'org.slf4j:slf4j-api:2.0.16'
+    implementation 'ch.qos.logback:logback-classic:1.4.11'
+    
+    // Lombok
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+    
+    // Testing
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
+}
+
+
+application {
+    mainClass = 'com.omori.pdfconvertor.Main'
+    applicationDefaultJvmArgs = [
+        '-Dfile.encoding=UTF-8',
+        '-Djava.awt.headless=false'
+    ]
+}
+
+// GraalVM native image không cần custom runtime vì đã tự chứa
+// Tạo thư mục cho executable 
+task prepareNativeApp {
+    dependsOn nativeCompile
+    doLast {
+        def appDir = file('build/app')
+        if (appDir.exists()) {
+            delete appDir
+        }
+        appDir.mkdirs()
+        
+        // Copy native executable
+        copy {
+            from 'build/native/nativeCompile/pdf-convertor'
+            into 'build/app'
+            rename { 'PDFConverter' }  // Rename for macOS app
+        }
+        
+        // Make executable
+        exec {
+            commandLine 'chmod', '+x', 'build/app/PDFConverter'
+        }
+    }
+}
+
+// Create macOS .app bundle manually for native executable
+task createNativeApp {
+    dependsOn nativeCompile
+    doLast {
+        def appDir = file('build/distributions/PDFConverter.app')
+        if (appDir.exists()) {
+            delete appDir
+        }
+        
+        // Create app bundle structure
+        def contentsDir = file("${appDir}/Contents")
+        def macosDir = file("${contentsDir}/MacOS")
+        def resourcesDir = file("${contentsDir}/Resources")
+        
+        macosDir.mkdirs()
+        resourcesDir.mkdirs()
+        
+        // Copy native executable
+        copy {
+            from 'build/native/nativeCompile/pdf-convertor'
+            into macosDir
+            rename { 'PDFConverter' }
+        }
+        
+        // Make executable
+        exec {
+            commandLine 'chmod', '+x', "${macosDir}/PDFConverter"
+        }
+        
+        // Create Info.plist
+        def infoPlist = """<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleName</key>
+    <string>PDF Converter</string>
+    <key>CFBundleDisplayName</key>
+    <string>PDF Converter</string>
+    <key>CFBundleIdentifier</key>
+    <string>com.omori.pdfconvertor</string>
+    <key>CFBundleVersion</key>
+    <string>1.0.0</string>
+    <key>CFBundleShortVersionString</key>
+    <string>1.0.0</string>
+    <key>CFBundleExecutable</key>
+    <string>PDFConverter</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>LSApplicationCategoryType</key>
+    <string>public.app-category.productivity</string>
+    <key>NSHighResolutionCapable</key>
+    <true/>
+</dict>
+</plist>"""
+        
+        file("${contentsDir}/Info.plist").text = infoPlist
+        
+        println "✅ Created native app bundle: ${appDir}"
+    }
+}
+
+// Create DMG from native app bundle
+task createNativeDMG {
+    dependsOn createNativeApp
+    doLast {
+        def outputDir = file('build/distributions')
+        def dmgName = 'PDFConverter-Native-1.0.0.dmg'
+        def dmgPath = file("${outputDir}/${dmgName}")
+        
+        // Remove existing DMG
+        if (dmgPath.exists()) {
+            dmgPath.delete()
+        }
+        
+        // Create DMG using hdiutil (macOS built-in tool)
+        exec {
+            commandLine 'hdiutil', 'create',
+                '-srcfolder', 'build/distributions/PDFConverter.app',
+                '-volname', 'PDF Converter',
+                '-fs', 'HFS+',
+                '-format', 'UDZO',
+                dmgPath.absolutePath
+        }
+        
+        println "✅ Created DMG: ${dmgPath}"
+    }
+}
+
+// Custom task for creating a fat JAR with JavaFX dependencies
+task fatJar(type: Jar) {
+    archiveClassifier = 'fat'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    
+    manifest {
+        attributes 'Main-Class': 'com.omori.pdfconvertor.Main'
+    }
+    
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    with jar
+}
+
+// Task to create DMG with embedded JVM runtime using jpackage
+task createDMGWithRuntime(dependsOn: fatJar) {
+    doLast {
+        def jarFile = file("build/libs/pdf-convertor-1.0-SNAPSHOT-fat.jar")
+        def outputDir = file("build/distributions")
+        outputDir.mkdirs()
+        
+        // Delete existing DMG if exists
+        def existingDMG = file("${outputDir}/PDFConverter-1.0.0.dmg")
+        if (existingDMG.exists()) {
+            existingDMG.delete()
+        }
+        
+        exec {
+            commandLine 'jpackage',
+                '--input', 'build/libs',
+                '--main-jar', 'pdf-convertor-1.0-SNAPSHOT-fat.jar',
+                '--main-class', 'com.omori.pdfconvertor.Main',
+                '--type', 'dmg',
+                '--dest', 'build/distributions',
+                '--name', 'PDFConverter',
+                '--app-version', '1.0.0',
+                '--vendor', 'Omori',
+                '--mac-package-name', 'PDF Converter',
+                '--mac-package-identifier', 'com.omori.pdfconvertor',
+                '--mac-app-category', 'public.app-category.productivity',
+                '--java-options', '-Dfile.encoding=UTF-8',
+                '--java-options', '-Djava.awt.headless=false',
+                '--java-options', '-Xmx2g',
+                '--java-options', '-Xms512m'
+        }
+        
+        println "✅ Created DMG with JVM runtime: PDFConverter-1.0.0.dmg"
+    }
+}
+
+// Alias for backward compatibility
+task createDMG {
+    dependsOn createDMGWithRuntime
+}
+
+// Task to create Windows .exe installer using jpackage
+task createWindowsEXE(dependsOn: fatJar) {
+    doLast {
+        def jarFile = file("build/libs/pdf-convertor-1.0-SNAPSHOT-fat.jar")
+        def outputDir = file("build/distributions")
+        outputDir.mkdirs()
+        
+        // Delete existing EXE if exists
+        def existingEXE = file("${outputDir}/PDFConverter-1.0.0.exe")
+        if (existingEXE.exists()) {
+            existingEXE.delete()
+        }
+        
+        def currentOS = System.getProperty("os.name").toLowerCase()
+        if (currentOS.contains("windows")) {
+            exec {
+                commandLine 'jpackage',
+                    '--input', 'build/libs',
+                    '--main-jar', 'pdf-convertor-1.0-SNAPSHOT-fat.jar',
+                    '--main-class', 'com.omori.pdfconvertor.Main',
+                    '--type', 'exe',
+                    '--dest', 'build/distributions',
+                    '--name', 'PDFConverter',
+                    '--app-version', '1.0.0',
+                    '--vendor', 'Omori',
+                    '--description', 'PDF to Excel Converter Tool',
+                    '--win-dir-chooser', // Allow user to choose install directory
+                    '--win-menu', // Add to start menu
+                    '--win-shortcut', // Create desktop shortcut
+                    '--java-options', '-Dfile.encoding=UTF-8',
+                    '--java-options', '-Djava.awt.headless=false',
+                    '--java-options', '-Xmx2g',
+                    '--java-options', '-Xms512m'
+            }
+            println "✅ Created Windows EXE installer: PDFConverter-1.0.0.exe"
+        } else {
+            println "⚠️  Windows EXE creation skipped (not running on Windows)"
+            println "   To build .exe, run this task on a Windows machine with JDK 17+"
+        }
+    }
+}
+
+// Task to create Windows .msi installer using jpackage  
+task createWindowsMSI(dependsOn: fatJar) {
+    doLast {
+        def jarFile = file("build/libs/pdf-convertor-1.0-SNAPSHOT-fat.jar")
+        def outputDir = file("build/distributions")
+        outputDir.mkdirs()
+        
+        // Delete existing MSI if exists
+        def existingMSI = file("${outputDir}/PDFConverter-1.0.0.msi")
+        if (existingMSI.exists()) {
+            existingMSI.delete()
+        }
+        
+        def currentOS = System.getProperty("os.name").toLowerCase()
+        if (currentOS.contains("windows")) {
+            exec {
+                commandLine 'jpackage',
+                    '--input', 'build/libs',
+                    '--main-jar', 'pdf-convertor-1.0-SNAPSHOT-fat.jar',
+                    '--main-class', 'com.omori.pdfconvertor.Main',
+                    '--type', 'msi',
+                    '--dest', 'build/distributions',
+                    '--name', 'PDFConverter',
+                    '--app-version', '1.0.0',
+                    '--vendor', 'Omori',
+                    '--description', 'PDF to Excel Converter Tool',
+                    '--win-dir-chooser', // Allow user to choose install directory
+                    '--win-menu', // Add to start menu
+                    '--win-shortcut', // Create desktop shortcut
+                    '--java-options', '-Dfile.encoding=UTF-8',
+                    '--java-options', '-Djava.awt.headless=false',
+                    '--java-options', '-Xmx2g',
+                    '--java-options', '-Xms512m'
+            }
+            println "✅ Created Windows MSI installer: PDFConverter-1.0.0.msi"
+        } else {
+            println "⚠️  Windows MSI creation skipped (not running on Windows)"
+            println "   To build .msi, run this task on a Windows machine with JDK 17+"
+        }
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+// Create distribution archives
+distributions {
+    main {
+        distributionBaseName = 'PDFConverter'
+        contents {
+            // Include all runtime dependencies
+            from(configurations.runtimeClasspath) {
+                into 'lib'
+                duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+            }
+            // Include the main JAR
+            from(jar) {
+                into 'lib'
+                duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+            }
+            // Create start scripts
+            from('src/main/scripts') {
+                into 'bin'
+                fileMode = 0755
+                duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+            }
+        }
+    }
+}
+
+// Task to create comprehensive distribution with GUI support
+task createFullDistribution {
+    dependsOn distZip, createDMGWithRuntime, createNativeDMG
+    
+    doLast {
+        println """
+✅ Build completed! Available distributions:
+   
+📦 ZIP Distribution (requires JVM):
+   - build/distributions/PDFConverter-1.0-SNAPSHOT.zip
+   - Extract and run: bin/PDFConverter (GUI available)
+   
+💿 DMG with JVM Runtime (no JVM required):
+   - build/distributions/PDFConverter-1.0.0.dmg
+   - Double-click to install, includes GUI
+   
+🚀 Native DMG (GraalVM, no JVM required):
+   - build/distributions/PDFConverter-Native-1.0.0.dmg
+   - Smallest size, fastest startup, includes GUI
+
+💻 Windows builds (run on Windows machine):
+   - ./gradlew createWindowsEXE  → PDFConverter-1.0.0.exe
+   - ./gradlew createWindowsMSI → PDFConverter-1.0.0.msi
+        """
+    }
+}
+
+// Cross-platform build task
+task createAllPlatformDistributions {
+    group = 'distribution'
+    description = 'Creates distributions for all supported platforms'
+    
+    // Always include cross-platform builds
+    dependsOn distZip
+    
+    doLast {
+        def currentOS = System.getProperty("os.name").toLowerCase()
+        println "🌍 Building distributions for current platform: ${currentOS}"
+        
+        if (currentOS.contains("mac")) {
+            println "🍎 Building macOS distributions..."
+            project.tasks.createDMGWithRuntime.execute()
+            project.tasks.createNativeDMG.execute()
+        } else if (currentOS.contains("windows")) {
+            println "🪟 Building Windows distributions..."
+            project.tasks.createWindowsEXE.execute()
+            project.tasks.createWindowsMSI.execute()
+        } else if (currentOS.contains("linux")) {
+            println "🐧 Building Linux distributions..."
+            // Add Linux-specific builds if needed in future
+        }
+        
+        println """
+✅ Platform-specific builds completed!
+
+📋 To build for other platforms:
+   🍎 macOS: Run on Mac → ./gradlew createDMGWithRuntime createNativeDMG
+   🪟 Windows: Run on Windows → ./gradlew createWindowsEXE createWindowsMSI
+   📦 Universal: ./gradlew distZip (works on any platform with JVM)
+        """
+    }
+}
+
+// GraalVM Native Image configuration with GUI support
+graalvmNative {
+    binaries {
+        main {
+            mainClass = 'com.omori.pdfconvertor.Main'
+            buildArgs.add('--no-fallback')
+            buildArgs.add('-H:+ReportExceptionStackTraces')
+            buildArgs.add('--initialize-at-build-time=org.slf4j,ch.qos.logback')
+            buildArgs.add('--enable-url-protocols=http,https')
+            buildArgs.add('-H:+AddAllCharsets')
+            // GUI support for different platforms
+            buildArgs.add('--initialize-at-run-time=sun.awt.X11.XToolkit,sun.java2d.xr.XRSurfaceData,sun.awt.X11GraphicsConfig,sun.awt.X11GraphicsDevice,sun.awt.X11GraphicsEnvironment')
+            // Swing/AWT support  
+            buildArgs.add('--initialize-at-run-time=javax.swing,java.awt')
+            // Allow reflection for Swing components
+            buildArgs.add('-H:+JNI')
+            buildArgs.add('--enable-native-access=ALL-UNNAMED')
+            // JVM args for GUI
+            jvmArgs.add('-Dfile.encoding=UTF-8')
+            jvmArgs.add('-Djava.awt.headless=false')
+            jvmArgs.add('-Dswing.defaultlaf=javax.swing.plaf.metal.MetalLookAndFeel')
+        }
+    }
+    metadataRepository {
+        enabled = true
+    }
+}
+
+// Task to build native image manually with Swing support  
+task buildNativeImage {
+    dependsOn fatJar
+    doLast {
+        exec {
+            commandLine 'native-image',
+                '--no-fallback',
+                '-cp', 'build/libs/pdf-convertor-1.0-SNAPSHOT-fat.jar',
+                '--enable-url-protocols=http,https',
+                '--initialize-at-build-time=org.slf4j,ch.qos.logback',
+                '-H:+ReportExceptionStackTraces',
+                '-H:+AddAllCharsets',
+                '--enable-native-access=ALL-UNNAMED',
+                '--enable-preview',
+                'com.omori.pdfconvertor.Main',
+                'pdf-convertor-native'
+        }
+    }
+}
