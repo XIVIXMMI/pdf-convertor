@@ -1,258 +1,233 @@
-# 📄 PDF Converter Tool
+# PDF Converter
 
-A powerful PDF to Excel converter with a user-friendly graphical interface. The application supports batch processing and real-time progress tracking.
+A cross-platform PDF to Excel converter with both GUI and command-line interfaces. Built with Java 21 and modern desktop technologies for high-performance document processing.
 
-## 🚀 Features
+## Features
 
-- **🔄 PDF to Excel Conversion**: Extract data from PDF files and export to Excel (.xlsx) format
-- **📁 Batch Processing**: Process multiple PDF folders simultaneously
-- **🎯 Drag & Drop Interface**: Drag and drop folders for quick processing
-- **📊 Progress Tracking**: Real-time progress bar and timer
-- **🌍 Cross-Platform**: Runs on Windows, macOS, and Linux
-- **🎨 User-Friendly GUI**: Modern Swing interface with intuitive design
-- **🚀 Multiple Modes**: Automatic GUI/Console mode switching
-- **⚡ High Performance**: Multi-threading for fast processing
+- **PDF to Excel Conversion**: Extract structured data from PDFs to Excel (.xlsx) format
+- **Dual Interface**: Graphical user interface with automatic fallback to command-line mode
+- **Batch Processing**: Process multiple PDF files and folders simultaneously
+- **Cross-Platform**: Native executables for Windows, macOS, and universal JAR for all platforms
+- **High Performance**: Multi-threaded processing with progress tracking
+- **Smart Detection**: Automatically switches between GUI and headless modes based on environment
 
-## 🛠 Technologies Used
+## Quick Start
 
-### Core Technologies
-- **Java 21** - Programming language and runtime
-- **Swing** - Desktop GUI framework  
-- **Gradle 8.5** - Build tool and dependency management
+### Pre-built Downloads
 
-### Libraries & Dependencies
-- **Apache PDFBox 2.0.29** - PDF document processing and data extraction
-- **Apache POI 5.2.5** - Excel file creation and manipulation
-- **Logback + SLF4J** - Logging framework
-- **Lombok** - Code generation and annotations
+| Platform | File | Size | JVM Required |
+|----------|------|------|--------------|
+| **Universal** | `PDFConverter-1.0-SNAPSHOT.zip` | ~25MB | Yes (Java 17+) |
+| **macOS** | `PDFConverter-1.0.0.dmg` | ~150MB | No |
+| **macOS Native** | `PDFConverter-Native-1.0.0.dmg` | ~65MB | No |
+| **Windows** | `PDFConverter-1.0.0.exe` | ~150MB | No |
+| **Windows** | `PDFConverter-1.0.0.msi` | ~150MB | No |
 
-### Build & Packaging Tools
-- **Gradle Application Plugin** - Creates executable distributions
-- **jpackage** - Creates native installers (.exe, .dmg, .msi)
-- **GraalVM Native Image** - Creates native executables
-- **Gradle Wrapper** - Ensures consistent Gradle version
+### Installation
 
-## 📁 Project Structure
-
-```
-pdf-convertor/
-├── src/
-│   ├── main/
-│   │   ├── java/com/omori/pdfconvertor/
-│   │   │   ├── Main.java                    # Main entry point
-│   │   │   ├── SwingMain.java               # GUI Swing application
-│   │   │   ├── HeadlessMain.java            # Console mode application
-│   │   │   └── service/
-│   │   │       └── PDFToExcelService.java   # PDF conversion service
-│   │   ├── scripts/
-│   │   │   ├── PDFConverter                 # Linux/Mac launcher script
-│   │   │   └── PDFConverter.bat            # Windows launcher script
-│   │   └── resources/
-│   │       └── META-INF/                    # Native image configuration
-├── build.gradle                            # Gradle build configuration
-├── gradle.properties                       # Gradle properties
-├── build-windows.bat                       # Windows build script
-├── build-windows.ps1                      # PowerShell build script
-├── BUILD_GUIDE.md                         # Detailed build instructions
-└── README.md                              # This file
-```
-
-## 🔧 System Requirements
-
-### To Build from Source Code
-- **JDK 17+** (Eclipse Temurin or Oracle JDK recommended)
-- **Gradle 8.0+** (or use included Gradle wrapper)
-- **Git** to clone repository
-
-### To Run Application
-- **No JVM required** (for .dmg/.exe/.msi files with embedded runtime)
-- **Or JVM 17+** (for .zip distribution)
-
-## 🚀 Installation & Usage
-
-### 📥 Download Pre-built Releases
-
-Download pre-built files from the [Releases page]:
-
-| Platform | File | Size | JVM Required | Description |
-|----------|------|------|--------------|-------------|
-| **Universal** | `PDFConverter-1.0-SNAPSHOT.zip` | ~22MB | ✅ | Runs on any platform with JVM |
-| **macOS** | `PDFConverter-1.0.0.dmg` | ~150MB | ❌ | macOS installer with embedded JVM |
-| **macOS Native** | `PDFConverter-Native-1.0.0.dmg` | ~65MB | ❌ | GraalVM native, fastest startup |
-| **Windows** | `PDFConverter-1.0.0.exe` | ~150MB | ❌ | Windows installer with embedded JVM |
-| **Windows** | `PDFConverter-1.0.0.msi` | ~150MB | ❌ | Windows MSI package |
-
-### 💻 How to Use
-
-#### macOS
+**macOS**
 ```bash
-# Download and install .dmg file
-# Double-click PDFConverter-1.0.0.dmg
+# Download .dmg file and install
+open PDFConverter-1.0.0.dmg
 # Drag to Applications folder
-# Launch from Applications or Spotlight
 ```
 
-#### Windows  
+**Windows**
 ```cmd
-# Download and run .exe or .msi file
-# Double-click to install
-# Shortcuts will be created on Desktop and Start Menu
-# No Java installation required
+# Run installer (creates desktop shortcut and start menu entry)
+PDFConverter-1.0.0.exe
 ```
 
-#### Universal ZIP (All Platforms)
+**Universal (All Platforms)**
 ```bash
-# Extract zip file
+# Extract and run
 unzip PDFConverter-1.0-SNAPSHOT.zip
 cd PDFConverter-1.0-SNAPSHOT
 
-# Run on Linux/macOS
+# Linux/macOS
 ./bin/PDFConverter
 
-# Run on Windows
+# Windows
 bin\PDFConverter.bat
 ```
 
-## 🏗️ Building from Source Code
+## Usage
 
-### Quick Start
+### GUI Mode
+1. Launch the application
+2. Click "Choose Folder" or drag-and-drop folders containing PDFs
+3. Monitor conversion progress with the built-in progress bar
+4. Excel files are created in the same directories as the source PDFs
+
+### Command Line Mode
+```bash
+# Convert PDFs in a specific folder
+./bin/PDFConverter /path/to/pdf/folder
+
+# Multiple folders
+./bin/PDFConverter /folder1 /folder2 /folder3
+
+# With Java directly
+java -jar lib/pdf-convertor-1.0-SNAPSHOT.jar /path/to/folder
+```
+
+## Building from Source
+
+### System Requirements
+- **JDK 21** (Eclipse Temurin recommended)
+- **Gradle 8.0+** (or use included wrapper)
+- **GraalVM 21** (for native builds)
+
+### Build Commands
+
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/pdf-convertor.git
+git clone <repository-url>
 cd pdf-convertor
 
 # Build all distributions for current platform
 ./gradlew createAllPlatformDistributions
+
+# Platform-specific builds
+./gradlew createDMGWithRuntime        # macOS with JVM
+./gradlew createNativeDMG             # macOS native
+./gradlew createWindowsEXE            # Windows executable
+./gradlew createWindowsMSI            # Windows installer
+./gradlew distZip                     # Universal ZIP
 ```
 
-### Platform-specific Builds
-
-#### macOS
+### Complete Build (macOS)
 ```bash
-# DMG with embedded JVM
-./gradlew createDMGWithRuntime
-
-# Native DMG (GraalVM)
-./gradlew createNativeDMG
-
 # Build all macOS distributions
 ./gradlew createFullDistribution
 ```
 
-#### Windows
+### Windows Build (on Windows)
 ```cmd
-# Use provided script (recommended)
+# Use provided script
 build-windows.bat
 
-# Or manual commands
+# Or manual
 gradlew.bat createWindowsEXE
 gradlew.bat createWindowsMSI
 ```
 
-#### Universal ZIP
-```bash
-# Create ZIP that runs on any platform
-./gradlew distZip
+## Project Structure
+
+```
+pdf-convertor/
+├── src/main/java/com/omori/pdfconvertor/
+│   ├── Main.java                     # Entry point with mode detection
+│   ├── SwingMain.java               # GUI application
+│   ├── HeadlessMain.java            # Command-line interface
+│   ├── model/
+│   │   └── PDFData.java             # Data model
+│   ├── service/
+│   │   ├── PDFService.java          # PDF processing
+│   │   ├── ExcelService.java        # Excel generation
+│   │   └── PDFToExcelService.java   # Main conversion service
+│   ├── util/
+│   │   └── RegexExtractor.java      # Text extraction utilities
+│   └── exception/
+│       └── PDFProcessingException.java
+├── src/main/scripts/                # Platform launcher scripts
+├── build.gradle                     # Gradle build configuration
+├── build-windows.bat               # Windows build script
+└── BUILD_GUIDE.md                  # Detailed build instructions
 ```
 
-### Detailed Build Instructions
-See [BUILD_GUIDE.md](BUILD_GUIDE.md) for comprehensive build process documentation.
+## Technologies
 
-## 📖 Usage Guide
+### Core
+- **Java 21** - Runtime and language features
+- **Swing** - Cross-platform GUI framework
+- **Gradle 8.5** - Build automation
 
-### Main Interface
+### Libraries
+- **Apache PDFBox 2.0.29** - PDF processing
+- **Apache POI 5.2.5** - Excel file generation
+- **Logback + SLF4J** - Logging framework
+- **Lombok 1.18.30** - Code generation
 
-1. **Select Folders**: Click "Choose Folder" or drag and drop folders containing PDFs
-2. **Track Progress**: Monitor progress bar and elapsed timer
-3. **View Results**: Excel files will be created in the same directory as PDFs
-4. **Batch Processing**: Can select multiple folders simultaneously
+### Build Tools
+- **jpackage** - Native installers with embedded JVM
+- **GraalVM Native Image** - Ahead-of-time compilation
+- **Gradle Application Plugin** - Distribution packaging
 
-### Advanced Features
+## Performance
 
-- **🎯 Smart Detection**: Automatically detects GUI/Console mode availability
-- **🔄 Multi-threading**: Parallel processing of multiple files
-- **📊 Progress Tracking**: Real-time progress with elapsed time display
-- **🛡️ Error Handling**: Comprehensive error handling and recovery
-- **📝 Logging**: Detailed logs for debugging and troubleshooting
+| Build Type | Startup Time | Memory Usage | File Size |
+|------------|--------------|--------------|-----------|
+| Universal ZIP | Fast* | ~200MB | ~25MB |
+| macOS DMG | Medium | ~300MB | ~150MB |
+| Native DMG | Very Fast | ~150MB | ~65MB |
+| Windows EXE/MSI | Medium | ~300MB | ~150MB |
 
-### Command Line Mode
-```bash
-# Run with arguments to use headless mode
-./bin/PDFConverter /path/to/pdf/folder
+*When JVM is already available
 
-# Or with Java directly
-java -jar lib/pdf-convertor-1.0-SNAPSHOT.jar /path/to/folder
-```
-
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
-1. **"GUI not available"**
-   - Application will automatically switch to console mode
-   - Ensure DISPLAY environment is set (Linux)
+**"GUI not available"**
+- Application automatically switches to console mode
+- On Linux, ensure DISPLAY environment variable is set
 
-2. **"Java not found"**
-   ```bash
-   # For ZIP distribution, need JVM 17+
-   export JAVA_HOME=/path/to/jdk-17
-   # Or use .dmg/.exe with embedded JVM
-   ```
+**Out of memory with large PDFs**
+```bash
+export JAVA_OPTS="-Xmx4G"
+./bin/PDFConverter
+```
 
-3. **Out of Memory with large PDFs**
-   ```bash
-   # Increase heap size
-   export JAVA_OPTS="-Xmx4G"
-   ./bin/PDFConverter
-   ```
+**Build failures**
+```bash
+# Ensure Java 21 is active
+java -version
 
-4. **Excel files not created**
-   - Check directory permissions
-   - Ensure PDFs are not password-protected
-   - Review logs in status area
+# For GraalVM native builds
+sdk install java 21.0.1-graal
+gu install native-image
+```
 
-### Build Issues
+### Platform-specific Notes
 
-1. **GraalVM native-image not found**
-   ```bash
-   # Install GraalVM and native-image
-   sdk install java 21.0.1-graal
-   gu install native-image
-   ```
+- **Windows .exe/.msi**: Can only be built on Windows machines
+- **macOS .dmg**: Can only be built on macOS machines
+- **Universal ZIP**: Builds on any platform, requires JVM to run
 
-2. **Windows build fails on macOS/Linux**
-   - Windows .exe/.msi can only be built on Windows machines
-   - Use Universal ZIP for cross-platform distribution
+## Development
 
-## 🤝 Contributing
+```bash
+# Run in development mode
+./gradlew run
+
+# Run tests
+./gradlew test
+
+# Build fat JAR
+./gradlew fatJar
+
+# Native compilation
+./gradlew nativeCompile
+```
+
+## Contributing
 
 1. Fork the repository
-2. Create feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
-5. Open Pull Request
+2. Create a feature branch (`git checkout -b feature/new-feature`)
+3. Commit changes (`git commit -m 'Add new feature'`)
+4. Push to branch (`git push origin feature/new-feature`)
+5. Create a Pull Request
 
-## 📊 Performance
+## License
 
-| Build Type | File Size | Startup Time | Memory Usage |
-|------------|-----------|--------------|--------------|
-| Universal ZIP | ~22MB | Fast* | ~200MB |
-| macOS DMG | ~150MB | Medium | ~300MB |
-| Native DMG | ~65MB | Very Fast | ~150MB |
-| Windows EXE/MSI | ~150MB | Medium | ~300MB |
+This project is licensed under the MIT License.
 
-*If JVM is already available
+## Support
 
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 📧 Support
-
-For support, bug reports, or contributions:
-- Create an issue on GitHub
-- Email: nguyen.le.programmer@gmail.com
+- **GitHub Issues**: Report bugs and feature requests
+- **Email**: nguyen.le.programmer@gmail.com
 
 ---
 
-**🚀 Built with Java 21 & Swing | Optimized for Performance & User Experience**
+**Built with Java 21 | Cross-Platform Desktop Application**
