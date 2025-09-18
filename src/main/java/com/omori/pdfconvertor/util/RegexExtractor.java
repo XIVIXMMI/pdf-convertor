@@ -21,7 +21,7 @@ public class RegexExtractor {
         PATTERNS.put("serialNumber", Pattern.compile("Số S/N của máy EDC:\\s*(\\S+)"));
         PATTERNS.put("posDevice", Pattern.compile("Loại máy:\\s*(.+)"));
         PATTERNS.put("groupName", Pattern.compile("Tên pháp lý \\(Theo giấy phép kinh doanh\\):(?:.*-\\s*(\\S+)|\\s*(.+))"));
-        PATTERNS.put("notes", Pattern.compile("Ghi chú:\\s*([\\s\\S]*?)(?=\\s*Ngày\\s+\\d+\\s+tháng\\s+\\d+|$)", Pattern.DOTALL));
+        PATTERNS.put("notes", Pattern.compile("Ghi chú:\\s*([\\s\\S]+?)(?=\\nNgày|$)", Pattern.DOTALL));
         PATTERNS.put("merchantId", Pattern.compile("MID\\s+VND\\s+([\\d\\s\\n]+)"));
         PATTERNS.put("terminalId", Pattern.compile("TID\\s+VND\\s+([\\d\\s\\n]+)"));
     }
@@ -64,10 +64,13 @@ public class RegexExtractor {
 
         // Notes
         extractPattern("notes", text).ifPresent(notes -> {
-            if (notes.startsWith("Ngày")) {
+            String cleanNotes = notes.trim();
+            if (cleanNotes.startsWith("Ngày") || cleanNotes.isEmpty()) {
                 data.setNotes("null");
             } else {
-                data.setNotes(notes.trim());
+                // Preserve line breaks but clean up extra whitespace
+                String processedNotes = cleanNotes.replaceAll("\\s+", " ").trim();
+                data.setNotes(processedNotes);
             }
         });
     }
@@ -89,15 +92,26 @@ public class RegexExtractor {
 
         // Terminal ID and Terminal ID 00
         extractPattern("terminalId", text).ifPresent(tid -> {
-            String cleanTid = tid.replace(" ", "").trim();
+            String cleanTid = tid.replace(" ", "").replace("\n", "").replace("\r", "").trim();
             data.setTerminalId(cleanTid);
 
-            // Generate Terminal ID 00 if applicable
-            if (cleanTid.length() >= 4 && cleanTid.substring(2, 4).equals("39")) {
-                String tid00 = cleanTid.substring(0, 2) + "00" + cleanTid.substring(4);
+            // Generate Terminal ID 00: replace "39" with "00", otherwise copy TID
+            if (cleanTid.contains("39")) {
+                String tid00 = cleanTid.replace("39", "00");
                 data.setTerminalId00(tid00);
+            } else {
+                // If no "39" found, TID00 = TID
+                data.setTerminalId00(cleanTid);
             }
+
+            logger.debug("Generated TID00: {} from original TID: {}", data.getTerminalId00(), cleanTid);
         });
+
+        // If no TID found at all, set both to empty string to avoid null
+        if (data.getTerminalId() == null) {
+            data.setTerminalId("");
+            data.setTerminalId00("");
+        }
     }
 
     private static java.util.Optional<String> extractPattern(String patternKey, String text) {
