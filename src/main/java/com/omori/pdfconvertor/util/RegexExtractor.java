@@ -21,7 +21,7 @@ public class RegexExtractor {
         PATTERNS.put("serialNumber", Pattern.compile("Số S/N của máy EDC:\\s*(\\S+)"));
         PATTERNS.put("posDevice", Pattern.compile("Loại máy:\\s*(.+)"));
         PATTERNS.put("groupName", Pattern.compile("Tên pháp lý \\(Theo giấy phép kinh doanh\\):(?:.*-\\s*(\\S+)|\\s*(.+))"));
-        PATTERNS.put("notes", Pattern.compile("Ghi chú:\\s*([\\s\\S]*?)(?=\\s*Ngày\\s+\\d+\\s+tháng\\s+\\d+|$)", Pattern.DOTALL | Pattern.MULTILINE));
+        PATTERNS.put("notes", Pattern.compile("Ghi chú:\\s*([\\s\\S]+?)(?=\\nNgày|$)", Pattern.DOTALL));
         PATTERNS.put("merchantId", Pattern.compile("MID\\s+VND\\s+([\\d\\s\\n]+)"));
         PATTERNS.put("terminalId", Pattern.compile("TID\\s+VND\\s+([\\d\\s\\n]+)"));
     }
@@ -64,10 +64,13 @@ public class RegexExtractor {
 
         // Notes
         extractPattern("notes", text).ifPresent(notes -> {
-            if (notes.startsWith("Ngày")) {
+            String cleanNotes = notes.trim();
+            if (cleanNotes.startsWith("Ngày") || cleanNotes.isEmpty()) {
                 data.setNotes("null");
             } else {
-                data.setNotes(notes.trim());
+                // Preserve line breaks but clean up extra whitespace
+                String processedNotes = cleanNotes.replaceAll("\\s+", " ").trim();
+                data.setNotes(processedNotes);
             }
         });
     }
