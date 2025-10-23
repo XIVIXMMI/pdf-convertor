@@ -92,14 +92,12 @@ public class RegexExtractor {
             data.setTerminalId(cleanTid);
 
             // Generate Terminal ID 00: replace digits "39" at position 3 and 4 with "00", otherwise copy TID
-            if ( cleanTid.length() >= 4) {
-                // String tid00 = cleanTid.replace("39", "00");
-                if(cleanTid.substring(2, 4).equals("39")) {
-                    String tid00 = cleanTid.substring(0, 2) + "00" + cleanTid.substring(4);
-                    data.setTerminalId00(tid00);
-                }
+            if (cleanTid.length() >= 4 && cleanTid.substring(2, 4).equals("39")) {
+                // Replace positions 3-4 with "00"
+                String tid00 = cleanTid.substring(0, 2) + "00" + cleanTid.substring(4);
+                data.setTerminalId00(tid00);
             } else {
-                // If no "39" found, TID00 = TID
+                // Keep original TID (either length < 4 OR positions 3-4 are not "39")
                 data.setTerminalId00(cleanTid);
             }
 
