@@ -1,6 +1,5 @@
-package com.omori.pdfconvertor.util;
+package com.omori.pdfconvertor;
 
-import com.omori.pdfconvertor.model.PDFData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,10 +48,8 @@ public class RegexExtractor {
     private static void extractBusinessData(String text, PDFData data) {
         // Business name
         extractPattern("businessName", text).ifPresent(data::setBusinessName);
-
         // Address
         extractPattern("address", text).ifPresent(data::setAddress);
-
         // Group name
         Matcher groupMatcher = PATTERNS.get("groupName").matcher(text);
         if (groupMatcher.find()) {
@@ -78,7 +75,6 @@ public class RegexExtractor {
     private static void extractDeviceData(String text, PDFData data) {
         // Serial number
         extractPattern("serialNumber", text).ifPresent(data::setSerialNumber);
-
         // POS device
         extractPattern("posDevice", text).ifPresent(device ->
                 data.setPosDevice(device.split("[^a-zA-Z0-9 ]+")[0].trim())
@@ -95,10 +91,13 @@ public class RegexExtractor {
             String cleanTid = tid.replace(" ", "").replace("\n", "").replace("\r", "").trim();
             data.setTerminalId(cleanTid);
 
-            // Generate Terminal ID 00: replace "39" with "00", otherwise copy TID
-            if (cleanTid.contains("39")) {
-                String tid00 = cleanTid.replace("39", "00");
-                data.setTerminalId00(tid00);
+            // Generate Terminal ID 00: replace digits "39" at position 3 and 4 with "00", otherwise copy TID
+            if ( cleanTid.length() >= 4) {
+                // String tid00 = cleanTid.replace("39", "00");
+                if(cleanTid.substring(2, 4).equals("39")) {
+                    String tid00 = cleanTid.substring(0, 2) + "00" + cleanTid.substring(4);
+                    data.setTerminalId00(tid00);
+                }
             } else {
                 // If no "39" found, TID00 = TID
                 data.setTerminalId00(cleanTid);

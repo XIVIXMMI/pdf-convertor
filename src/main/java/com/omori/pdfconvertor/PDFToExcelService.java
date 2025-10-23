@@ -1,7 +1,5 @@
-package com.omori.pdfconvertor.service;
+package com.omori.pdfconvertor;
 
-import com.omori.pdfconvertor.model.PDFData;
-import com.omori.pdfconvertor.util.RegexExtractor;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.poi.ss.usermodel.*;

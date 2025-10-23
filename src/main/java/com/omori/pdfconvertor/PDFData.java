@@ -1,4 +1,4 @@
-package com.omori.pdfconvertor.model;
+package com.omori.pdfconvertor;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

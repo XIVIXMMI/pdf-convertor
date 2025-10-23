@@ -1,7 +1,5 @@
 package com.omori.pdfconvertor;
 
-import com.omori.pdfconvertor.service.PDFToExcelService;
-
 import java.io.File;
 import java.util.Scanner;
 
