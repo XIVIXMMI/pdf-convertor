@@ -22,11 +22,15 @@ A simple PDF to Excel converter with GUI and command-line interfaces. Extracts s
 ### Pre-built Installers (No JDK Required)
 
 **Windows**
-```bash
-# Run build script on Windows machine
+```cmd
+# Option 1: Use build script (builds both EXE and MSI)
 build-windows.bat
 
-# Install generated files
+# Option 2: Use Gradle directly
+.\gradlew createWindowsEXE
+.\gradlew createWindowsMSI
+
+# Output files (in build\distributions):
 # - PDFConverter-1.0.0.exe
 # - PDFConverter-1.0.0.msi
 ```
