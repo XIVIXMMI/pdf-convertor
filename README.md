@@ -2,7 +2,7 @@
 
 A simple PDF to Excel converter with GUI and command-line interfaces. Extracts structured data from PDFs and exports to Excel format.
 
-**Version:** 1.0-SNAPSHOT
+**Version:** 1.0.0
 
 ## Features
 
@@ -11,28 +11,44 @@ A simple PDF to Excel converter with GUI and command-line interfaces. Extracts s
 - Batch processing support
 - Cross-platform (Windows, macOS, Linux)
 
-## Quick Start
+## Requirements
 
-### Installation
+- **JDK 21+** (for building)
+- Gradle 8.0+ (or use included wrapper)
+- Pre-built installers include JVM runtime (no Java required)
 
-**Universal JAR (All platforms with Java 21+)**
+## Installation
+
+### Pre-built Installers (No JDK Required)
+
+**Windows**
+```bash
+# Run build script on Windows machine
+build-windows.bat
+
+# Install generated files
+# - PDFConverter-1.0.0.exe
+# - PDFConverter-1.0.0.msi
+```
+
+**macOS**
+```bash
+# Build with embedded JVM
+./gradlew createDMGWithRuntime
+# Output: PDFConverter-1.0.0.dmg
+
+# Build native (smaller, faster)
+./gradlew createNativeDMG
+# Output: PDFConverter-Native-1.0.0.dmg
+```
+
+### Universal JAR (JDK 21+ Required)
+
 ```bash
 ./gradlew distZip
 unzip build/distributions/PDFConverter-1.0-SNAPSHOT.zip
 cd PDFConverter-1.0-SNAPSHOT/bin
 ./PDFConverter
-```
-
-**Windows**
-```bash
-gradlew.bat createWindowsEXE
-# Install the generated .exe file
-```
-
-**macOS**
-```bash
-./gradlew createDMGWithRuntime
-# Open the generated .dmg file
 ```
 
 ## Usage
@@ -58,6 +74,9 @@ java -jar pdf-convertor-1.0-SNAPSHOT.jar /path/to/folder
 
 # Run application
 ./gradlew run
+
+# Build all (macOS)
+./gradlew createFullDistribution
 ```
 
 ## Project Structure
@@ -86,11 +105,6 @@ src/main/java/com/omori/pdfconvertor/
 - Apache POI (Excel generation)
 - Swing (GUI)
 - Gradle 8.5
-
-## Requirements
-
-- JDK 21+
-- Gradle 8.0+ (or use wrapper)
 
 ## License
 

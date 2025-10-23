@@ -34,6 +34,9 @@ if (!project.hasProperty('org.gradle.java.home')) {
 group = 'com.omori'
 version = '1.0-SNAPSHOT'
 
+// Version for packaged distributions (without SNAPSHOT suffix)
+ext.appVersion = '1.0.0'
+
 java {
     sourceCompatibility = JavaVersion.VERSION_21
     targetCompatibility = JavaVersion.VERSION_21
@@ -153,9 +156,9 @@ task createNativeApp {
     <key>CFBundleIdentifier</key>
     <string>com.omori.pdfconvertor</string>
     <key>CFBundleVersion</key>
-    <string>1.0.0</string>
+    <string>${appVersion}</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.0.0</string>
+    <string>${appVersion}</string>
     <key>CFBundleExecutable</key>
     <string>PDFConverter</string>
     <key>CFBundlePackageType</key>
@@ -180,7 +183,7 @@ task createNativeDMG {
     dependsOn createNativeApp
     doLast {
         def outputDir = file('build/distributions')
-        def dmgName = 'PDFConverter-Native-1.0.0.dmg'
+        def dmgName = "PDFConverter-Native-${appVersion}.dmg"
         def dmgPath = file("${outputDir}/${dmgName}")
         
         // Remove existing DMG
@@ -223,13 +226,13 @@ task createDMGWithRuntime(dependsOn: fatJar) {
         def jarFile = file("build/libs/pdf-convertor-1.0-SNAPSHOT-fat.jar")
         def outputDir = file("build/distributions")
         outputDir.mkdirs()
-        
+
         // Delete existing DMG if exists
-        def existingDMG = file("${outputDir}/PDFConverter-1.0.0.dmg")
+        def existingDMG = file("${outputDir}/PDFConverter-${appVersion}.dmg")
         if (existingDMG.exists()) {
             existingDMG.delete()
         }
-        
+
         exec {
             commandLine 'jpackage',
                 '--input', 'build/libs',
@@ -238,7 +241,7 @@ task createDMGWithRuntime(dependsOn: fatJar) {
                 '--type', 'dmg',
                 '--dest', 'build/distributions',
                 '--name', 'PDFConverter',
-                '--app-version', '1.0.0',
+                '--app-version', appVersion,
                 '--vendor', 'Omori',
                 '--mac-package-name', 'PDF Converter',
                 '--mac-package-identifier', 'com.omori.pdfconvertor',
@@ -248,8 +251,8 @@ task createDMGWithRuntime(dependsOn: fatJar) {
                 '--java-options', '-Xmx2g',
                 '--java-options', '-Xms512m'
         }
-        
-        println "✅ Created DMG with JVM runtime: PDFConverter-1.0.0.dmg"
+
+        println "✅ Created DMG with JVM runtime: PDFConverter-${appVersion}.dmg"
     }
 }
 
@@ -264,15 +267,16 @@ task createWindowsEXE(dependsOn: fatJar) {
         def jarFile = file("build/libs/pdf-convertor-1.0-SNAPSHOT-fat.jar")
         def outputDir = file("build/distributions")
         outputDir.mkdirs()
-        
+
         // Delete existing EXE if exists
-        def existingEXE = file("${outputDir}/PDFConverter-1.0.0.exe")
+        def existingEXE = file("${outputDir}/PDFConverter-${appVersion}.exe")
         if (existingEXE.exists()) {
             existingEXE.delete()
         }
-        
+
         def currentOS = System.getProperty("os.name").toLowerCase()
         if (currentOS.contains("windows")) {
+            // Allow user to choose install directory, add to start menu, create desktop shortcut
             exec {
                 commandLine 'jpackage',
                     '--input', 'build/libs',
@@ -281,40 +285,41 @@ task createWindowsEXE(dependsOn: fatJar) {
                     '--type', 'exe',
                     '--dest', 'build/distributions',
                     '--name', 'PDFConverter',
-                    '--app-version', '1.0.0',
+                    '--app-version', appVersion,
                     '--vendor', 'Omori',
                     '--description', 'PDF to Excel Converter Tool',
-                    '--win-dir-chooser', // Allow user to choose install directory
-                    '--win-menu', // Add to start menu
-                    '--win-shortcut', // Create desktop shortcut
+                    '--win-dir-chooser',
+                    '--win-menu',
+                    '--win-shortcut',
                     '--java-options', '-Dfile.encoding=UTF-8',
                     '--java-options', '-Djava.awt.headless=false',
                     '--java-options', '-Xmx2g',
                     '--java-options', '-Xms512m'
             }
-            println "✅ Created Windows EXE installer: PDFConverter-1.0.0.exe"
+            println "✅ Created Windows EXE installer: PDFConverter-${appVersion}.exe"
         } else {
             println "⚠️  Windows EXE creation skipped (not running on Windows)"
-            println "   To build .exe, run this task on a Windows machine with JDK 17+"
+            println "   To build .exe, run this task on a Windows machine with JDK 21+"
         }
     }
 }
 
-// Task to create Windows .msi installer using jpackage  
+// Task to create Windows .msi installer using jpackage
 task createWindowsMSI(dependsOn: fatJar) {
     doLast {
         def jarFile = file("build/libs/pdf-convertor-1.0-SNAPSHOT-fat.jar")
         def outputDir = file("build/distributions")
         outputDir.mkdirs()
-        
+
         // Delete existing MSI if exists
-        def existingMSI = file("${outputDir}/PDFConverter-1.0.0.msi")
+        def existingMSI = file("${outputDir}/PDFConverter-${appVersion}.msi")
         if (existingMSI.exists()) {
             existingMSI.delete()
         }
-        
+
         def currentOS = System.getProperty("os.name").toLowerCase()
         if (currentOS.contains("windows")) {
+            // Allow user to choose install directory, add to start menu, create desktop shortcut
             exec {
                 commandLine 'jpackage',
                     '--input', 'build/libs',
@@ -323,21 +328,21 @@ task createWindowsMSI(dependsOn: fatJar) {
                     '--type', 'msi',
                     '--dest', 'build/distributions',
                     '--name', 'PDFConverter',
-                    '--app-version', '1.0.0',
+                    '--app-version', appVersion,
                     '--vendor', 'Omori',
                     '--description', 'PDF to Excel Converter Tool',
-                    '--win-dir-chooser', // Allow user to choose install directory
-                    '--win-menu', // Add to start menu
-                    '--win-shortcut', // Create desktop shortcut
+                    '--win-dir-chooser',
+                    '--win-menu',
+                    '--win-shortcut',
                     '--java-options', '-Dfile.encoding=UTF-8',
                     '--java-options', '-Djava.awt.headless=false',
                     '--java-options', '-Xmx2g',
                     '--java-options', '-Xms512m'
             }
-            println "✅ Created Windows MSI installer: PDFConverter-1.0.0.msi"
+            println "✅ Created Windows MSI installer: PDFConverter-${appVersion}.msi"
         } else {
             println "⚠️  Windows MSI creation skipped (not running on Windows)"
-            println "   To build .msi, run this task on a Windows machine with JDK 17+"
+            println "   To build .msi, run this task on a Windows machine with JDK 21+"
         }
     }
 }
@@ -374,26 +379,26 @@ distributions {
 // Task to create comprehensive distribution with GUI support
 task createFullDistribution {
     dependsOn distZip, createDMGWithRuntime, createNativeDMG
-    
+
     doLast {
         println """
 ✅ Build completed! Available distributions:
-   
+
 📦 ZIP Distribution (requires JVM):
-   - build/distributions/PDFConverter-1.0-SNAPSHOT.zip
+   - build/distributions/PDFConverter-${version}.zip
    - Extract and run: bin/PDFConverter (GUI available)
-   
+
 💿 DMG with JVM Runtime (no JVM required):
-   - build/distributions/PDFConverter-1.0.0.dmg
+   - build/distributions/PDFConverter-${appVersion}.dmg
    - Double-click to install, includes GUI
-   
+
 🚀 Native DMG (GraalVM, no JVM required):
-   - build/distributions/PDFConverter-Native-1.0.0.dmg
+   - build/distributions/PDFConverter-Native-${appVersion}.dmg
    - Smallest size, fastest startup, includes GUI
 
 💻 Windows builds (run on Windows machine):
-   - ./gradlew createWindowsEXE  → PDFConverter-1.0.0.exe
-   - ./gradlew createWindowsMSI → PDFConverter-1.0.0.msi
+   - ./gradlew createWindowsEXE  → PDFConverter-${appVersion}.exe
+   - ./gradlew createWindowsMSI → PDFConverter-${appVersion}.msi
         """
     }
 }

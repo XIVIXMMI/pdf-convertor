@@ -1,8 +1,8 @@
 # ================================================================
-# PDF Converter - Windows PowerShell Build Script  
+# PDF Converter - Windows PowerShell Build Script
 # ================================================================
 # This script builds Windows .exe and .msi installers
-# Requirements: JDK 17+ with jpackage tool
+# Requirements: JDK 21+ with jpackage tool
 # ================================================================
 
 Write-Host "🚀 PDF Converter Windows Build Script" -ForegroundColor Cyan
@@ -20,7 +20,7 @@ try {
     $javaVersion = java -version 2>&1 | Select-String "version"
     Write-Host "✅ Found Java: $javaVersion" -ForegroundColor Green
 } catch {
-    Write-Host "❌ Java not found! Please install JDK 17 or higher" -ForegroundColor Red
+    Write-Host "❌ Java not found! Please install JDK 21 or higher" -ForegroundColor Red
     Write-Host "   Download from: https://adoptium.net/" -ForegroundColor Yellow
     exit 1
 }
@@ -31,7 +31,7 @@ try {
     $jpackageVersion = jpackage --version 2>&1
     Write-Host "✅ Found jpackage: $jpackageVersion" -ForegroundColor Green
 } catch {
-    Write-Host "❌ jpackage not found! Please ensure you have JDK 17+ installed" -ForegroundColor Red
+    Write-Host "❌ jpackage not found! Please ensure you have JDK 21+ installed" -ForegroundColor Red
     Write-Host "   jpackage is included with JDK 17 and later" -ForegroundColor Yellow
     exit 1
 }
@@ -69,9 +69,9 @@ if ($LASTEXITCODE -ne 0) {
 Write-Host ""
 Write-Host "✅ Windows build completed successfully!" -ForegroundColor Green
 Write-Host ""
-Write-Host "📁 Output files:" -ForegroundColor Cyan
-Write-Host "   - build\distributions\PDFConverter-1.0.0.exe" -ForegroundColor White
-Write-Host "   - build\distributions\PDFConverter-1.0.0.msi" -ForegroundColor White
+Write-Host "📁 Output files (check build\distributions folder):" -ForegroundColor Cyan
+Write-Host "   - PDFConverter-1.0.0.exe" -ForegroundColor White
+Write-Host "   - PDFConverter-1.0.0.msi" -ForegroundColor White
 Write-Host ""
 Write-Host "🎯 Installation notes:" -ForegroundColor Cyan
 Write-Host "   - .exe: Self-extracting installer with GUI" -ForegroundColor White

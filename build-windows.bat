@@ -5,7 +5,7 @@ REM ================================================================
 REM PDF Converter - Windows Build Script
 REM ================================================================
 REM This script builds Windows .exe and .msi installers
-REM Requirements: JDK 17+ with jpackage tool
+REM Requirements: JDK 21+ with jpackage tool
 REM ================================================================
 
 echo 🚀 PDF Converter Windows Build Script
@@ -22,7 +22,7 @@ REM Check for Java
 echo 📋 Checking Java installation...
 java -version >nul 2>&1
 if !errorlevel! neq 0 (
-    echo ❌ Java not found! Please install JDK 17 or higher
+    echo ❌ Java not found! Please install JDK 21 or higher
     echo    Download from: https://adoptium.net/
     pause
     exit /b 1
@@ -32,7 +32,7 @@ REM Check for jpackage
 echo 📋 Checking jpackage availability...
 jpackage --version >nul 2>&1
 if !errorlevel! neq 0 (
-    echo ❌ jpackage not found! Please ensure you have JDK 17+ installed
+    echo ❌ jpackage not found! Please ensure you have JDK 21+ installed
     echo    jpackage is included with JDK 17 and later
     pause
     exit /b 1
@@ -74,9 +74,9 @@ if !errorlevel! neq 0 (
 echo.
 echo ✅ Windows build completed successfully!
 echo.
-echo 📁 Output files:
-echo    - build\distributions\PDFConverter-1.0.0.exe
-echo    - build\distributions\PDFConverter-1.0.0.msi
+echo 📁 Output files (check build\distributions folder):
+echo    - PDFConverter-1.0.0.exe
+echo    - PDFConverter-1.0.0.msi
 echo.
 echo 🎯 Installation notes:
 echo    - .exe: Self-extracting installer with GUI
